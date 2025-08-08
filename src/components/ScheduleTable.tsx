@@ -15,21 +15,27 @@ export default function ScheduleTable({
 }: ScheduleTableProps) {
   const formatDate = (date: string) => {
     const d = new Date(date);
-    return d.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
-      month: '2-digit' 
+    // Ajuste para fuso horário local
+    const adjustedDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+    return adjustedDate.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit'
     });
   };
 
   const getDayOfWeek = (date: string) => {
     const d = new Date(date);
+    // Ajuste para fuso horário local
+    const adjustedDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
     const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    return days[d.getDay()];
+    return days[adjustedDate.getDay()];
   };
 
   const isWeekend = (date: string) => {
     const d = new Date(date);
-    return d.getDay() === 0 || d.getDay() === 6;
+    // Ajuste para fuso horário local
+    const adjustedDate = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+    return adjustedDate.getDay() === 0 || adjustedDate.getDay() === 6;
   };
 
   return (
@@ -52,11 +58,10 @@ export default function ScheduleTable({
                 Funcionário
               </th>
               {dateRange.map((date) => (
-                <th 
-                  key={date} 
-                  className={`border border-slate-300 p-2 text-center font-medium text-xs min-w-[70px] ${
-                    isWeekend(date) ? 'bg-red-50 text-red-700' : 'bg-slate-50 text-slate-700'
-                  }`}
+                <th
+                  key={date}
+                  className={`border border-slate-300 p-2 text-center font-medium text-xs min-w-[70px] ${isWeekend(date) ? 'bg-red-50 text-red-700' : 'bg-slate-50 text-slate-700'
+                    }`}
                 >
                   <div className="flex flex-col">
                     <span className="text-[10px] text-slate-500">
@@ -84,19 +89,17 @@ export default function ScheduleTable({
                   </div>
                 </td>
                 {dateRange.map((date) => (
-                  <td 
-                    key={date} 
-                    className={`border border-slate-300 p-1 text-center ${
-                      isWeekend(date) ? 'bg-red-50/30' : ''
-                    }`}
+                  <td
+                    key={date}
+                    className={`border border-slate-300 p-1 text-center ${isWeekend(date) ? 'bg-red-50/30' : ''
+                      }`}
                   >
                     <button
                       onClick={() => onToggleDayOff(employee.id, date)}
-                      className={`w-full h-10 rounded-md font-medium text-xs transition-all duration-200 ${
-                        employee.dayOffs.includes(date)
+                      className={`w-full h-10 rounded-md font-medium text-xs transition-all duration-200 ${employee.dayOffs.includes(date)
                           ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-md'
                           : 'bg-transparent hover:bg-slate-100 text-slate-600 border border-slate-200'
-                      }`}
+                        }`}
                     >
                       {employee.dayOffs.includes(date) ? (
                         <div className="flex items-center justify-center gap-1">

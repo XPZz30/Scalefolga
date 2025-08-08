@@ -16,26 +16,32 @@ export default function DateRangePicker({
 }: DateRangePickerProps) {
   const formatDateForDisplay = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
-      month: 'long', 
-      year: 'numeric' 
+    // Ajuste para o fuso horário local
+    const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    return adjustedDate.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
     });
   };
 
   const getDayCount = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    // Ajuste para o fuso horário
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    const diffTime = end.getTime() - start.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
     return diffDays;
   };
 
   const setPresetRange = (days: number) => {
     const start = new Date();
-    const end = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
     end.setDate(start.getDate() + days - 1);
-    
+
     onStartDateChange(start.toISOString().split('T')[0]);
     onEndDateChange(end.toISOString().split('T')[0]);
   };
@@ -66,11 +72,11 @@ export default function DateRangePicker({
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               />
             </div>
-            
+
             <div className="flex items-end justify-center sm:px-2">
               <ArrowRight className="h-5 w-5 text-slate-400" />
             </div>
-            
+
             <div className="flex-1">
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Data Fim
